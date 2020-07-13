@@ -4,25 +4,18 @@
 # @FileName: makedataFile.py
 # @Software: PyCharm
 # @Project: Comment_Sentiment_Analysis
-# @Description: 
+# @Description: 产生模型训练所需的data
 
 from transformers import BertTokenizer
-from transformers import BertForSequenceClassification
-from transformers import BertConfig
-from transformers import BertPreTrainedModel
 import torch
-import torch.nn as nn
-from transformers import BertModel
-import time
-import argparse
 import pandas as pd
-from . import model_config
+from SentimentClassification import model_config
 from torch.utils.data import Dataset
 
 
 class data_loader(Dataset):
     def __init__(self, root, data_type='train', max_length=model_config.MAX_LENGTH):
-        self.tokenizer = BertTokenizer.from_pretrained(model_config.BERT_BASE_CHINESE_MODEL)
+        self.tokenizer = BertTokenizer.from_pretrained(model_config.BERT_MODEL)
         self.x_list = []
         self.y_list = []
         self.position = []

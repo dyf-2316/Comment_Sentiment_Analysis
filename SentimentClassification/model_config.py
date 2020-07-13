@@ -17,3 +17,7 @@ DATA_PATH = './data'
 MODEL_PATH = ''
 NUM_WORKERS = 2
 BERT_BASE_CHINESE_MODEL = './bert/bert-base-chinese'
+ROBERTA_WWM_EXT_CHINESE = './bert/chinese_roberta_wwm_ext_pytorch'
+
+BERT_MODELS = [BERT_BASE_CHINESE_MODEL, ROBERTA_WWM_EXT_CHINESE]
+BERT_MODEL = BERT_MODELS[1]

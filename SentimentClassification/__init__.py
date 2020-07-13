@@ -5,3 +5,7 @@
 # @Software: PyCharm
 # @Project: Comment_Sentiment_Analysis
 # @Description:
+if __name__ == '__main__':
+    a = ['a', 'b', 'v', '']
+    a.remove('')
+    print(a)
