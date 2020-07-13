@@ -25,11 +25,11 @@ use_gpu = (device == 'gpu') and model_config.USE_GPU
 
 
 class model_train(object):
-    def __init__(self, epochs=model_config.EPOCH):
+    def __init__(self, epochs=model_config.EPOCH, bert_model_path=model_config.BERT_MODEL):
         print('start train ... ')
         self.epochs = epochs
         print('load pretrained model ...')
-        self.model = BertForSequenceClassification.from_pretrained(model_config.BERT_BASE_CHINESE_MODEL, num_labels=model_config.NUM_LABEL)
+        self.model = BertForSequenceClassification.from_pretrained(bert_model_path, num_labels=model_config.NUM_LABEL)
         if use_gpu: self.model.cuda()
         print('load data ...')
         trainset = data_loader(model_config.DATA_PATH, data_type='train')
