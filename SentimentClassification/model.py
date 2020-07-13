@@ -12,6 +12,7 @@ from tensorboardX import SummaryWriter
 
 
 
+
 def show_net():
     # 加载训练的Bert-base-chinese模型
     model = BertForSequenceClassification.from_pretrained('chinese_roberta_wwm_ext_pytorch')
