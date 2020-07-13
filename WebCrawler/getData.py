@@ -29,6 +29,12 @@ def get_search_url(keywords):
     return search_url
 
 
+product_already_get = ['100002076057', '47775809660', '51961736081', '51961736083', '51961736082',
+                       '100003407023', '100011323840', '100002738154', '36937884339', '26692636341',
+                       '34482228435', '67271641787', '6723160', '60683595850', '60683595849',
+                       '100003407025', '50166525673', '100006961267', '29197375716', '25749487078']
+
+
 def get_product_id(url, product_num=DEFAULT_PRODUCT_NUM):
     """
     通过正则表达式匹配，在url下的html通过正则表达式获取product_num数量的商品ID
@@ -38,8 +44,11 @@ def get_product_id(url, product_num=DEFAULT_PRODUCT_NUM):
     """
     html = get_page_html(url)
     results = re.findall('<li .*?data-sku=\"(.*?)\"', html, re.S)
-    mylogger.debug("获取商品ID -- {}".format(results[:product_num]))
-    return results[1:product_num+1]
+    for result in results:
+        if result in product_already_get:
+            results.remove(result)
+    mylogger.debug("获取商品ID -- {}".format(results))
+    return results
 
 
 def get_product_data(product_id):
@@ -68,6 +77,7 @@ def get_product_data(product_id):
 
         return product_data
     except IndexError:
+        mylogger.error("商品基本信息空缺，跳过 -- {}".format(product_id))
         return None
 
 
@@ -121,5 +131,5 @@ def get_comment_data(product_id, score, page, product):
             "comment": data[i]['content']
         }
         comment_data.append(comment)
-    mylogger.dubug("获取商品评论数据 -- counts:{}".format(len(comment_data)))
+    mylogger.debug("获取商品评论数据 -- counts:{}".format(len(comment_data)))
     return comment_data

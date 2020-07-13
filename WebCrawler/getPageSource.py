@@ -55,7 +55,7 @@ def get_json_data(url):
     else:
         json_data = html[1:-2]
     if json_data == '':
-        mylogger.info("访问过快，获取json失败，10min后再访问")
+        mylogger.error("访问过快，获取json失败，10min后再访问")
         time.sleep(600)
         html = urllib.request.urlopen(url).read().decode('gbk', 'ignore')
         json_data = html[20:-2]
