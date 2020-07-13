@@ -12,6 +12,7 @@ import time
 from SentimentClassification import model_config
 import pandas as pd
 from jieba import lcut
+import ujson
 # 使用gpu还是cpu
 # 检测当前环境设备
 device = ['cpu', 'gpu'][torch.cuda.is_available()]
@@ -133,8 +134,45 @@ def comment_split_pos_neg_file(filepath, save_path):
     pos_comment_df.to_csv(save_path + '/pos_comment_0.945.csv')
     pass
 
+
+def predict_pos_neg_with_tag(filepath, save_path, bert_model=model_config.BERT_MODEL):
+    """
+    对不同主题的comment进行 情感预测
+    :param filepath: (str) 要预测的文件路径
+    :param save_path: (str) 预测后文件的保存路径
+    :param bert_model: (str) 使用的模型的路径
+    :return:
+    """
+    print(f'加载模型 {bert_model} ……')
+    # 加载训练的Bert-base-chinese模型的tokenizer
+    tokenizer = BertTokenizer.from_pretrained(bert_model)
+    # 加载训练的Bert-base-chinese模型
+    model = BertForSequenceClassification.from_pretrained(bert_model)
+    # 加载训练好的模型
+    model.load_state_dict(torch.load(model_config.TRAINED_MODEL, map_location=torch.device(device)))
+    # 加载文件
+    print(f'加载数据 {filepath} ……')
+    with open(filepath, 'r', encoding='utf-8') as f:
+        comment_dict = ujson.load(f)
+    predicted_comment_dict = {}
+    print('开始预测 ……')
+    for tag, comments in comment_dict.items():
+        predicted_comments = []
+        for comment in comments:
+            if comment == []: continue
+            predicted = eval_one(comment, tokenizer, model)
+            predicted_comments.append([comment, int(predicted)])
+        predicted_comment_dict[tag] = predicted_comments
+    print(f'开始保存预测后的文件 {save_path}')
+    # {tag: [ [comment_content, 0|1] ] }
+    with open(save_path, 'w', encoding='utf-8') as f:
+        ujson.dump(predicted_comment_dict, f, indent=4)
+    pass
+
+
 if __name__ == '__main__':
     start = time.time()
+    predict_pos_neg_with_tag('../data/tag_comment_pretreat.json', '../data/tag_comment_pos_neg.json')
     # predict = eval_one_sentence('这真是太好了', label=1)
-    eval_file('../data/002_meidi_comment_comressed.txt')
+    # eval_file('../data/002_meidi_comment_comressed.txt')
     print(f'time is {time.time() - start}')
