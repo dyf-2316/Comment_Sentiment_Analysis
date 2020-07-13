@@ -17,3 +17,15 @@ if __name__ == '__main__':
     for comments in comment_dict.values():
         for comment in comments:
             if comment == []: continue
+from SentimentClassification import model_config
+from transformers import BertForSequenceClassification
+import torch
+from tensorboardX import SummaryWriter
+import ujson
+if __name__ == '__main__':
+    with open('../data/tag_comment_pretreat.json', 'r', encoding='utf-8') as f:
+        comment_dict = ujson.load(f)
+    comment_dict ={}
+    for comments in comment_dict.values():
+        for comment in comments:
+            if comment == []: continue

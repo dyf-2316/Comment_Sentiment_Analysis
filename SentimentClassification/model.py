@@ -5,17 +5,19 @@
 # @Software: PyCharm
 # @Project: Comment_Sentiment_Analysis
 # @Description: 
-from SentimentClassification import model_config
+
 from transformers import BertForSequenceClassification
 import torch
 from tensorboardX import SummaryWriter
 
 
 def show_net():
-    model = BertForSequenceClassification.from_pretrained(model_config.BERT_MODEL)
-    # 加载训练好的模型
-    model.load_state_dict(
-        torch.load(model_config.TRAINED_MODEL, map_location=torch.device('cpu')))
-    with SummaryWriter('RoBert-wwm-ext-Net') as w:
-        w.add_graph(model, (torch.zeros(1, 10).long()), False)
+    # 加载训练的Bert-base-chinese模型
+    model = BertForSequenceClassification.from_pretrained('chinese_roberta_wwm_ext_pytorch')
+        # 加载训练好的模型
+    model.load_state_dict(torch.load('model/model_0.945_1594610033.971383.pth', map_location=torch.device('cpu')))
+    with SummaryWriter(comment='RoBert-wwm-ext') as w:
+      w.add_graph(model, (torch.zeros(1,10).long()), False)
     pass
+
+
