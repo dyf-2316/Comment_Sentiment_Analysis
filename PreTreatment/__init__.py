@@ -1,13 +1,35 @@
-import pandas as pd
-from pymongo import MongoClient
+from Logger import Logger
+from PreTreatment.dataProcess import del_duplicate, compress
+from PreTreatment.findData import get_data_with_mongo
 
+mylogger = Logger('PreTreatment').logger
 
-def get_data_with_mongo():
-    client = MongoClient(host='localhost', port=27017)
-    mongo_db = client['WebCrawler']
-    mongo_table = mongo_db['comment']
-    data = pd.DataFrame(list(mongo_table.collection.find()))
-    return data
+if __name__ == '__main__':
+    mylogger.info("获取数据库数据")
+    result = get_data_with_mongo()
+    mylogger.info("MongoDB获取数据量 -- {}".format(len(result)))
 
+    mylogger.info("评论数据抽取")
+    data = result.drop(['_id'], axis=1)
+    data['creationDate'] = data['creationTime'].apply(lambda x: x[:10])
+    data = data.drop(['creationTime'], axis=1)
+    data.to_csv('../data/000_meidi_data_origin.txt',
+                index=False, header=True)
 
-df = get_data_with_mongo()
+    mylogger.info("评论数据去重")
+    data_del_dup = del_duplicate(data)
+    data_del_dup.to_csv('../data/001_meidi_data_deldup.txt',
+                        index=False, header=True)
+    mylogger.info('去重后数据量 -- {}'.format(len(data_del_dup)))
+
+    mylogger.info("评论数据机械压缩机械压缩")
+    data_compressed = data_del_dup.copy()
+    data_compressed['compcomm'] = data_compressed['comment'].apply(compress)
+    data_compressed['comment'] = data_compressed['compcomm']
+    data_compressed = data_compressed.drop(['compcomm'], axis=1)
+    temp = data_compressed["comment"].apply(len)
+    data_compressed = data_compressed[temp > 4]
+    data_compressed.to_csv('../data/002_meidi_data_comressed.txt', index=False, header=True)
+    mylogger.info('机械压缩后数据量 -- {}'.format(len(data_compressed)))
+
+    mylogger.info("数据预处理完成")

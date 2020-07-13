@@ -35,9 +35,8 @@ class Logger(object):
 
     def _get_data_file_handler(self, filename):
         """返回一个process文件日志handler"""
-        # 1. 获取一个文件日志handler,能记录到相应的文件，同时在每天午夜进行分割
-        file_handler = logging.handlers.TimedRotatingFileHandler(filename, when='midnight', interval=1,
-                                                                 backupCount=7, encoding="utf-8")
+        # 1. 获取一个文件日志handler,能记录到相应的文件，以文件大小来分割，超过5M则新建日志
+        file_handler = logging.handlers.RotatingFileHandler(filename, maxBytes=5*1024*1024, backupCount=10)
         # 2. 设置日志格式
         file_handler.setFormatter(self.formatter)
         # 3. 设置文件日志等级
