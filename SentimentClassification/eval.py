@@ -4,15 +4,15 @@
 # @FileName: eval.py
 # @Software: PyCharm
 # @Project: Comment_Sentiment_Analysis
-# @Description: Bert模型是使用和评价
+# @Description: Bert模型的使用和评价
 
 import torch
 from transformers import BertTokenizer, BertForSequenceClassification
 import time
 from SentimentClassification import model_config
 import pandas as pd
-from jieba import lcut
 import ujson
+import jieba.posseg as psg
 # 使用gpu还是cpu
 # 检测当前环境设备
 device = ['cpu', 'gpu'][torch.cuda.is_available()]
@@ -47,6 +47,16 @@ def eval_one_sentence(sentence, label, bert_model=model_config.BERT_MODEL):
     predicted = torch.max(logits.data, 1)
     print(f'句子 "{sentence}" 情感 预测为： {predicted.indices.data.cpu().numpy()[0]} 正确为：{label} ')
     return predicted.indices.data.cpu().numpy()[0]
+
+
+def str_cut(comment, stop_words):
+    seg_list_exact = psg.cut(comment)
+    object_list = []
+    for word in seg_list_exact:  # 循环读取每个分词
+        # 另一种去掉不重要的词
+        # if word.word not in stop_words and (word.flag not in ['nr', 'c', 'f', 'ns', 'LOC', 's', 'nt', 'xc', 'ORG', 't', 'p', 'nw']): #如果分词不再停用词中
+        if word.word not in stop_words and (word.flag in ['v', 'n', 'a', 'd', 'vd', 'an', 'ad']): object_list.append(word.word)  # 追加到列表
+    return object_list
 
 
 def eval_one(sentence, tokenizer, model):
@@ -87,6 +97,7 @@ def eval_file(filepath, save_path, bert_model=model_config.BERT_MODEL):
     model = BertForSequenceClassification.from_pretrained(bert_model)
     # 加载训练好的模型
     model.load_state_dict(torch.load(model_config.TRAINED_MODEL, map_location=torch.device(device)))
+    if use_gpu: model.cuda()
     print(f'读取文件 {filepath} ……')
     df = pd.read_csv(filepath, header=None)
     print('开始情感预测 ……')
@@ -106,19 +117,21 @@ def comment_split_pos_neg_file(filepath, save_path):
     # 读取数据文件
     df = pd.read_csv(filepath)
     # 加载停用词表
-    with open('../data/stoplist.txt', 'r', encoding='gbk') as f:
-        stopwords_list = f.readlines()
-    stopwords_list.append(' ')
-    # 分词
-    df['comment'] = df['1'].apply(lambda x: lcut(x))
-    # 去除停用词
-    df['comment'] = df['comment'].apply(lambda x: [word for word in x if word not in stopwords_list])
+    stop_words = (open('../data/stopwords.txt', 'r', encoding='utf-8').read())
+    stop_words = stop_words.split('\n')
+    stop_words.append('\n')
+    stop_words.append(' ')
+    stop_words.append('\\')
+    # 分词, 去除停用词
+    df['comment'] = df['1'].apply(lambda x: str_cut(x, stop_words))
     # 删除去处理之前的comment
     df.drop('1', axis=1, inplace=True)
     # 根据情感的正负进行分组
     df_splited = df.groupby(df['sentiment'])
 
     for key, value in df_splited:
+        # 花里胡哨的写法
+        # locals()[['neg_comment_df', 'pos_comment_df'][key]] = value
         if key == 1:
             pos_comment_df = value
         else:
@@ -130,8 +143,8 @@ def comment_split_pos_neg_file(filepath, save_path):
     pos_comment_df.set_index('0', inplace=True)
     neg_comment_df.set_index('0', inplace=True)
 
-    neg_comment_df.to_csv(save_path + '/neg_comment_0.945.csv')
-    pos_comment_df.to_csv(save_path + '/pos_comment_0.945.csv')
+    neg_comment_df.to_csv(save_path + '/neg_comment_0.960.csv')
+    pos_comment_df.to_csv(save_path + '/pos_comment_0.960.csv')
     pass
 
 
@@ -150,10 +163,10 @@ def predict_pos_neg_with_tag(filepath, save_path, bert_model=model_config.BERT_M
     model = BertForSequenceClassification.from_pretrained(bert_model)
     # 加载训练好的模型
     model.load_state_dict(torch.load(model_config.TRAINED_MODEL, map_location=torch.device(device)))
+    if use_gpu: model.cuda()
     # 加载文件
     print(f'加载数据 {filepath} ……')
-    with open(filepath, 'r', encoding='utf-8') as f:
-        comment_dict = ujson.load(f)
+    with open(filepath, 'r', encoding='utf-8') as f: comment_dict = ujson.load(f)
     predicted_comment_dict = {}
     print('开始预测 ……')
     for tag, comments in comment_dict.items():
@@ -165,14 +178,42 @@ def predict_pos_neg_with_tag(filepath, save_path, bert_model=model_config.BERT_M
         predicted_comment_dict[tag] = predicted_comments
     print(f'开始保存预测后的文件 {save_path}')
     # {tag: [ [comment_content, 0|1] ] }
-    with open(save_path, 'w', encoding='utf-8') as f:
-        ujson.dump(predicted_comment_dict, f, indent=4)
+    with open(save_path, 'w', encoding='utf-8') as f: ujson.dump(predicted_comment_dict, f, indent=4)
+    pass
+
+
+def tag_comment_split_pos_neg(filepath, save_path):
+    """
+    不同主题的comment分成pos neg，并分词和去除停用词
+    :param filepath: （str）要处理的文件
+    :param save_path: （str） 文件保存的位置
+    :return:
+    """
+    with open(filepath, 'r', encoding='utf-8') as f: comment_dict = ujson.load(f)
+    # 加载停用词表
+    stop_words = (open(model_config.STOPWORDS_PATH, 'r', encoding='utf-8').read())
+    stop_words = stop_words.split('\n')
+    stop_words.extend(['\n', ' ', '\\'])
+
+    tag_comment_pos, tag_comment_neg = {}, {}
+    for tag, comments in comment_dict.items():
+        tag_comment_neg[tag], tag_comment_pos[tag] = [], []
+        for comment in comments:
+            cutted_comment = str(str_cut(comment[0], stop_words))
+            if cutted_comment == '[]': continue
+            [tag_comment_neg[tag], tag_comment_pos[tag]][comment[1]].append(cutted_comment)
+        pass
+    pass
+    with open(save_path+'/tag_pos_comments.json', 'w', encoding='utf-8') as f: ujson.dump(tag_comment_pos, f)
+    with open(save_path+'/tag_neg_comments.json', 'w', encoding='utf-8') as f: ujson.dump(tag_comment_neg, f)
     pass
 
 
 if __name__ == '__main__':
     start = time.time()
-    predict_pos_neg_with_tag('../data/tag_comment_pretreat.json', '../data/tag_comment_pos_neg.json')
+    # predict_pos_neg_with_tag('../data/tag_comment_pretreat.json', '../data/tag_comment_pos_neg.json')
     # predict = eval_one_sentence('这真是太好了', label=1)
     # eval_file('../data/002_meidi_comment_comressed.txt')
+    # comment_split_pos_neg_file(filepath='../data/comment_0.960.csv', save_path='../data')
+    tag_comment_split_pos_neg(filepath='../data/tag_comment_pos_neg_0.96.json', save_path='../data')
     print(f'time is {time.time() - start}')
