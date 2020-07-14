@@ -4,8 +4,7 @@
 # @FileName: test.py
 # @Software: PyCharm
 # @Project: Comment_Sentiment_Analysis
-# @Description: 
-a = [1,2,3,4]
-for i in a:
-    i = [i,10]
-print(a)
+# @Description:
+import os
+os.system('tensorboard --logdir SentimentClassification/RoBert-wwm-ext-Net')
+print(d)

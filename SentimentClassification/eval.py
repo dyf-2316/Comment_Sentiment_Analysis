@@ -119,9 +119,7 @@ def comment_split_pos_neg_file(filepath, save_path):
     # 加载停用词表
     stop_words = (open('../data/stopwords.txt', 'r', encoding='utf-8').read())
     stop_words = stop_words.split('\n')
-    stop_words.append('\n')
-    stop_words.append(' ')
-    stop_words.append('\\')
+    stop_words.extend(['\n', ' ', '\\'])
     # 分词, 去除停用词
     df['comment'] = df['1'].apply(lambda x: str_cut(x, stop_words))
     # 删除去处理之前的comment
@@ -137,14 +135,11 @@ def comment_split_pos_neg_file(filepath, save_path):
         else:
             neg_comment_df = value
     # 去掉情感一列
-    neg_comment_df.drop('sentiment', axis=1, inplace=True)
-    pos_comment_df.drop('sentiment', axis=1, inplace=True)
+    neg_comment_df.drop('sentiment', axis=1, inplace=True) or pos_comment_df.drop('sentiment', axis=1, inplace=True)
 
-    pos_comment_df.set_index('0', inplace=True)
-    neg_comment_df.set_index('0', inplace=True)
+    pos_comment_df.set_index('0', inplace=True) or neg_comment_df.set_index('0', inplace=True)
 
-    neg_comment_df.to_csv(save_path + '/neg_comment_0.960.csv')
-    pos_comment_df.to_csv(save_path + '/pos_comment_0.960.csv')
+    neg_comment_df.to_csv(save_path + '/neg_comment_0.960.csv') or pos_comment_df.to_csv(save_path + '/pos_comment_0.960.csv')
     pass
 
 
