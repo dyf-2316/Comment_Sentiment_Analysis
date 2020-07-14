@@ -1,5 +1,7 @@
+import json
+
 from Logger import Logger
-from PreTreatment.dataProcess import del_duplicate, compress
+from PreTreatment.dataProcess import del_duplicate, compress, get_tag_comment
 from PreTreatment.findData import get_data_with_mongo
 
 mylogger = Logger('PreTreatment').logger
@@ -32,4 +34,9 @@ if __name__ == '__main__':
     data_compressed.to_csv('../data/002_meidi_data_comressed.txt', index=False, header=True)
     mylogger.info('机械压缩后数据量 -- {}'.format(len(data_compressed)))
 
+    mylogger.info("标签评论数据的抽取")
+    tag_comment_dict = get_tag_comment(data_del_dup)
+    with open('../data/003_meidi_tagComment.json', 'w', encoding='utf-8') as fw:
+        json.dump(tag_comment_dict, fw, indent=4)
+    mylogger.info("抽取的评论标签 -- {}".format(tag_comment_dict.keys()))
     mylogger.info("数据预处理完成")

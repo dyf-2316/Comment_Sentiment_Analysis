@@ -95,15 +95,16 @@ def compressed_text(comment_list):
     return compress_list
 
 
-def compress(comment):
+def compress(comment, n=4):
     """
     对文本进行正序、逆序机械压缩，短句删除的处理
+    :param n: 所需删除短句的长度
     :param comment: (str)
     :return: (str)
     """
     comp_comm = []
     comment = str(comment)
-    if len(comment) <= 4:
+    if len(comment) <= n:
         pass
     else:
         comment = re.sub("[\s,./?'\"|\]\[{}+_)(*&^%$#@!~`=\-]+|[+\-，。/！？、～@#¥%…&*（）—；：‘’“”]+", " ", comment)
@@ -111,9 +112,72 @@ def compress(comment):
         comp_list = compressed_text(comp_list)
         comp_list = compressed_text(comp_list[::-1])
         comp_list = comp_list[::-1]
-        if len(comp_list) <= 4:
+        if len(comp_list) <= n:
             pass
         else:
             comp_comm = []
             comp_comm = (''.join(comp_list)).replace("\\n", "")
     return comp_comm
+
+
+def extract_tag_comment(comment):
+    comment_lines = comment.split('\n')
+    tag_comment_dict = {}
+    if len(comment) < 2:
+        return None
+    else:
+        for lines in comment_lines:
+            tag_comment = lines.split('：')
+            if len(tag_comment) == 2:
+                if len(tag_comment[0]) < 6:
+                    tag_comment_dict[tag_comment[0]] = tag_comment[1]
+            else:
+                continue
+    if tag_comment_dict:
+        return tag_comment_dict
+    else:
+        return None
+
+
+def get_tag_comment(data):
+    """
+    在含有评论数据的数据框中，抽取固定格式的标签数据
+    :param data: (DataFrame)
+    :return: (dict)
+    """
+    tag_comments = {}
+    for comment in data.comment:
+        tags_dict = extract_tag_comment(comment)
+        if tags_dict:
+            for item in tags_dict.items():
+                tag_comments[item[0]] = []
+
+    for comment in data.comment:
+        tags_dict = extract_tag_comment(comment)
+        if tags_dict:
+            for item in tags_dict.items():
+                tag_comments[item[0]].append(item[1])
+
+    index = list(tag_comments.keys())
+
+    for i in index:
+        if len(tag_comments[i]) < 10:
+            tag_comments.pop(i)
+
+    for key in tag_comments.keys():
+        com_list = tag_comments[key]
+        com_list = list(set(com_list))
+        new_list = []
+        for i in range(len(com_list)):
+            com_list[i] = compress(com_list[i], 2)
+            if com_list[i]:
+                new_list.append(com_list[i])
+        new_list = list(set(new_list))
+        tag_comments[key] = new_list
+
+    for comment in tag_comments['*热速度']:
+        tag_comments['加热速度'].append(comment)
+
+    tag_comments.pop('*热速度')
+
+    return tag_comments
