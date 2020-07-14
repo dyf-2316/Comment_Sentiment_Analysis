@@ -4,8 +4,17 @@
 # @FileName: test.py
 # @Software: PyCharm
 # @Project: Comment_Sentiment_Analysis
-# @Description: 
-a = [1,2,3,4]
-for i in a:
-    i = [i,10]
-print(a)
+# @Description:
+import webbrowser
+
+from selenium import webdriver
+import os
+webbrowser.open("www.baidu.com")
+
+def login():
+    webbrowser.open('file://' + os.getcwd() + "/data/LDA_Results/neg_comment_lda.html")
+
+
+login()
+
+
