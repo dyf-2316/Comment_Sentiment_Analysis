@@ -22,7 +22,6 @@ plt.rcParams['font.sans-serif'] = ['SimHei']
 st.title('基于python的电商产品评论数据情感分析')
 st.text('组6 丁一凡 李毅 鲁含章 马生鸿')
 
-from selenium import webdriver
 
 
 def login(path):
@@ -135,7 +134,7 @@ if st.checkbox('Show compressed comments'):
     comments_compress = pd.DataFrame(data_compress.comment)
     st.dataframe(comments_compress, 500, 400)
 
-st.markdown('### 2.3 标签评论的获取')
+st.markdown('### 2.3 标签评论的获取 —— 隐含信息挖掘')
 st.markdown('观察评论数据，发现部分评论数据有固定的主题标签，将其爬取下来进行商品某方面特征定向分析。')
 if st.checkbox('Show tag comments'):
     st.json(tag_comment_origin)
@@ -158,22 +157,28 @@ st.line_chart(date_score)
 
 st.markdown('### 3.3 美的热水器商品评论（{}）的词云'.format(tag))
 image = load_word_cloud('{}_pos.jpg'.format(tag))
+st.write('')
 st.image(image, caption='{} 积极情感词云'.format(tag), use_column_width=True)
+st.write('')
 image = load_word_cloud('{}_neg.jpg'.format(tag))
 st.image(image, caption='{} 消极情感词云'.format(tag), use_column_width=True)
+st.write('')
 
 st.markdown('### 3.4 美的热水器商品评论（{}）的语义网络'.format(tag))
+st.write('')
 image = load_word_net('{}_pos/net.jpg'.format(tag))
 st.image(image, caption='{} 积极情感语义网络'.format(tag), use_column_width=True)
+st.write('')
 image = load_word_net('{}_neg/net.jpg'.format(tag))
 st.image(image, caption='{} 消极情感语义网络'.format(tag), use_column_width=True)
+st.write('')
 
 
 st.markdown('## 4 数据情感分析')
 
 st.markdown('### 4.1 模型神经网络结构图网络')
 
-if st.button('显示'):
+if st.button('显示结构图'):
     # 子进程显示tensorboard
     p = subprocess.Popen('tensorboard --logdir ../SentimentClassification/RoBert-wwm-ext-Net')
     time.sleep(2)
@@ -184,6 +189,17 @@ if st.button('显示'):
     p.terminate()
     pass
 
+st.markdown('### 4.2 模型训练Loss曲线')
+if st.button('显示Loss曲线'):
+    # 子进程显示tensorboard
+    p = subprocess.Popen('tensorboard --logdir ../SentimentClassification/runs')
+    time.sleep(2)
+    # 打开tensorboard的网址
+    webbrowser.open('http://localhost:6006/')
+    time.sleep(10)
+    # 子进程结束
+    p.terminate()
+    pass
 st.markdown('### 4.3 情感分析结果在评论评分中的分布')
 score_1 = data_comment[data_comment.score == 1].sentiment.value_counts()
 score_2 = data_comment[data_comment.score == 2].sentiment.value_counts()
@@ -204,10 +220,22 @@ score[0] = score[0]*-1
 st.bar_chart(score, width=100, use_container_width=True)
 
 
-st.markdown('## 5 LDA主题分析')
+st.markdown('## 5 LDA模型构建')
 
+st.markdown('### 5.1 LDA关键字与主题提取\n')
 if st.button('正面评论LDA结果展示'):
     login('lda_{}_{}_pos.html'.format(tag, topic_number))
 
 if st.button('负面评论LDA结果展示'):
-    login('lda_{}_{}_pos.html'.format(tag, topic_number))
+    login('lda_{}_{}_neg.html'.format(tag, topic_number))
+
+
+st.markdown('## 6 模型评估与优化')
+
+st.markdown('### 6.1 自训练情感分析模型效果对比')
+df = pd.DataFrame({'Roberta-wwm': [0.9282735613010842, 0.9089481946624803, 0.9538714991762768],
+                   'snowNLP': [0.87, 0.8680781758957655, 0.8766447368421053],
+                   'ROSTCM6': [0.675, 0.6319612590799032, 0.8585526315789473]},
+                  index=['Accuracy', 'Precision', 'Recall']
+                  )
+st.table(df)
