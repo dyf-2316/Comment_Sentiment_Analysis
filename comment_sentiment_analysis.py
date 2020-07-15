@@ -25,7 +25,7 @@ st.text('组6 丁一凡 李毅 鲁含章 马生鸿')
 
 
 def login(path):
-    webbrowser.get('Safari').open('file://' + os.getcwd()[:-9] + "/data/LDA_Results/" + path)
+    webbrowser.open('file://' + os.getcwd()[:-9] + "/data/LDA_Results/" + path)
 
 
 @st.cache
