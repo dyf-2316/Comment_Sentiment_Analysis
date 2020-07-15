@@ -1,7 +1,7 @@
 # -*- coding:utf-8 -*-
 # @Time： 2020/7/13 11:48 AM
 # @Author: dyf-2316
-# @FileName: commet_sentiment_analysis.py
+# @FileName: comment_sentiment_analysis.py
 # @Software: PyCharm
 # @Project: Comment_Sentiment_Analysis
 # @Description: visualize this project
