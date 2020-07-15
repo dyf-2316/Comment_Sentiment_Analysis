@@ -6,8 +6,6 @@
 # @Project: Comment_Sentiment_Analysis
 # @Description: process the comment data
 
-import numpy as np
-import pandas as pd
 import operator
 import re
 

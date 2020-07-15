@@ -4,7 +4,6 @@ import pyLDAvis
 import pyLDAvis.sklearn
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.decomposition import LatentDirichletAllocation
-
 from Logger import Logger
 
 mylogger = Logger('Model').logger

@@ -7,7 +7,6 @@
 # @Description: get data from html/json
 
 import re
-
 from Logger import Logger
 from config import *
 from WebCrawler.getPageSource import get_page_html, get_json_data

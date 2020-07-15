@@ -15,7 +15,7 @@ from SentimentClassification.makedataFile import data_loader
 from torch.utils.data import DataLoader
 # from tensorboardX import SummaryWriter
 
-# 之后需要加tensorboard
+# 使用tensorboard
 # writer = SummaryWriter(comment='train')
 # 使用gpu还是cpu
 # 检测当前环境设备
