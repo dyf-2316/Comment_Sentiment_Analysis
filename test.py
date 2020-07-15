@@ -12,7 +12,7 @@ import os
 webbrowser.open("www.baidu.com")
 
 def login():
-    webbrowser.open('file://' + os.getcwd() + "/data/LDA_Results/neg_comment_lda.html")
+    webbrowser.open('file://' + os.getcwd() + "/data/LDA_Results/lda_其他特色_3_neg.html")
 
 
 login()
