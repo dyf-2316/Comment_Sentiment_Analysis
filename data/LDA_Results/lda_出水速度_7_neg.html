@@ -1,0 +1,41 @@
+
+<link rel="stylesheet" type="text/css" href="https://cdn.rawgit.com/bmabey/pyLDAvis/files/ldavis.v1.0.0.css">
+
+
+<div id="ldavis_el3181950456588323038273885"></div>
+<script type="text/javascript">
+
+var ldavis_el3181950456588323038273885_data = {"mdsDat": {"x": [-0.09824904615358397, 0.15187837545166702, -0.026908274425678738, -0.009353852298783214, -0.005865627996663096, -0.007601710743267107, -0.003899863833690972], "y": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], "topics": [1, 2, 3, 4, 5, 6, 7], "cluster": [1, 1, 1, 1, 1, 1, 1], "Freq": [55.84744736263758, 14.613641587791115, 5.91508333241871, 5.907575200512905, 5.905620059141637, 5.905372364731604, 5.905260092766437]}, "tinfo": {"Term": ["\u51fa\u6c34", "\u901f\u5ea6", "\u51fa\u6c34", "\u901f\u5ea6", "\u901f\u5ea6", "\u51fa\u6c34", "\u51fa\u6c34", "\u901f\u5ea6", "\u901f\u5ea6", "\u51fa\u6c34", "\u901f\u5ea6", "\u51fa\u6c34", "\u901f\u5ea6", "\u51fa\u6c34", "\u901f\u5ea6", "\u51fa\u6c34"], "Freq": [12.0, 10.0, 8.786370802427937, 4.058542090978708, 3.199557483459884, 0.1615800817320728, 0.7586850783983698, 0.6017840880579334, 0.6636610174609974, 0.695081278656971, 0.6775403247586992, 0.6807522888438773, 0.6704163037055978, 0.6878193401826709, 0.685729884199523, 0.6724799371367577], "Total": [12.0, 10.0, 12.442768807378657, 10.557231192621343, 10.557231192621343, 12.442768807378657, 12.442768807378657, 10.557231192621343, 10.557231192621343, 12.442768807378657, 10.557231192621343, 12.442768807378657, 10.557231192621343, 12.442768807378657, 10.557231192621343, 12.442768807378657], "Category": ["Default", "Default", "Topic1", "Topic1", "Topic2", "Topic2", "Topic3", "Topic3", "Topic4", "Topic4", "Topic5", "Topic5", "Topic6", "Topic6", "Topic7", "Topic7"], "logprob": [2.0, 1.0, -0.3797, -1.1521, -0.0493, -3.035, -0.584, -0.8157, -0.7165, -0.6703, -0.6955, -0.6908, -0.706, -0.6804, -0.6834, -0.703], "loglift": [2.0, 1.0, 0.2346, -0.3734, 0.7294, -2.4207, 0.0304, -0.037, 0.0621, -0.0559, 0.0832, -0.0764, 0.0726, -0.0661, 0.0952, -0.0886]}, "token.table": {"Topic": [1, 3, 4, 5, 6, 7, 1, 2, 3, 4, 5, 6, 7], "Freq": [0.7233116792030188, 0.08036796435589097, 0.08036796435589097, 0.08036796435589097, 0.08036796435589097, 0.08036796435589097, 0.37888722213412157, 0.2841654166005912, 0.09472180553353039, 0.09472180553353039, 0.09472180553353039, 0.09472180553353039, 0.09472180553353039], "Term": ["\u51fa\u6c34", "\u51fa\u6c34", "\u51fa\u6c34", "\u51fa\u6c34", "\u51fa\u6c34", "\u51fa\u6c34", "\u901f\u5ea6", "\u901f\u5ea6", "\u901f\u5ea6", "\u901f\u5ea6", "\u901f\u5ea6", "\u901f\u5ea6", "\u901f\u5ea6"]}, "R": 2, "lambda.step": 0.01, "plot.opts": {"xlab": "PC1", "ylab": "PC2"}, "topic.order": [2, 7, 6, 1, 5, 4, 3]};
+
+function LDAvis_load_lib(url, callback){
+  var s = document.createElement('script');
+  s.src = url;
+  s.async = true;
+  s.onreadystatechange = s.onload = callback;
+  s.onerror = function(){console.warn("failed to load library " + url);};
+  document.getElementsByTagName("head")[0].appendChild(s);
+}
+
+if(typeof(LDAvis) !== "undefined"){
+   // already loaded: just create the visualization
+   !function(LDAvis){
+       new LDAvis("#" + "ldavis_el3181950456588323038273885", ldavis_el3181950456588323038273885_data);
+   }(LDAvis);
+}else if(typeof define === "function" && define.amd){
+   // require.js is available: use it to load d3/LDAvis
+   require.config({paths: {d3: "https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min"}});
+   require(["d3"], function(d3){
+      window.d3 = d3;
+      LDAvis_load_lib("https://cdn.rawgit.com/bmabey/pyLDAvis/files/ldavis.v1.0.0.js", function(){
+        new LDAvis("#" + "ldavis_el3181950456588323038273885", ldavis_el3181950456588323038273885_data);
+      });
+    });
+}else{
+    // require.js not available: dynamically load d3 & LDAvis
+    LDAvis_load_lib("https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js", function(){
+         LDAvis_load_lib("https://cdn.rawgit.com/bmabey/pyLDAvis/files/ldavis.v1.0.0.js", function(){
+                 new LDAvis("#" + "ldavis_el3181950456588323038273885", ldavis_el3181950456588323038273885_data);
+            })
+         });
+}
+</script>
