@@ -25,7 +25,7 @@ st.text('组6 丁一凡 李毅 鲁含章 马生鸿')
 
 
 def login(path):
-    webbrowser.open('file://' + os.getcwd()[:-9] + "/data/LDA_Results/" + path)
+    webbrowser.open('file://' + os.getcwd() + "/data/LDA_Results/" + path)
 
 
 @st.cache
@@ -180,7 +180,7 @@ st.markdown('### 4.1 模型神经网络结构图网络')
 
 if st.button('显示结构图'):
     # 子进程显示tensorboard
-    p = subprocess.Popen('tensorboard --logdir SentimentClassification/RoBert-wwm-ext-Net')
+    p = subprocess.Popen('tensorboard --logdir SentimentClassification/RoBerta-wwm-ext-Net')
     time.sleep(2)
     # 打开tensorboard的网址
     webbrowser.open('http://localhost:6006/')
