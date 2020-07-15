@@ -53,8 +53,7 @@ def str_cut(comment, stop_words):
     seg_list_exact = psg.cut(comment)
     object_list = []
     for word in seg_list_exact:  # 循环读取每个分词
-        # 另一种去掉不重要的词
-        # if word.word not in stop_words and (word.flag not in ['nr', 'c', 'f', 'ns', 'LOC', 's', 'nt', 'xc', 'ORG', 't', 'p', 'nw']): #如果分词不再停用词中
+        # 获得需要的词性
         if word.word not in stop_words and (word.flag in ['v', 'n', 'a', 'd', 'vd', 'an', 'ad']): object_list.append(word.word)  # 追加到列表
     return object_list
 
@@ -101,7 +100,7 @@ def eval_file(filepath, save_path, bert_model=model_config.BERT_MODEL):
     print(f'读取文件 {filepath} ……')
     df = pd.read_csv(filepath, header=None)
     print('开始情感预测 ……')
-    df['sentiment'] = df[1].apply(lambda x: eval_one(x, tokenizer, model))
+    df['sentiment'] = df[1].apply(lambda x: eval_one(x[:100], tokenizer, model))
     print(f'开始保存情感预测后的数据 {save_path} ……')
     df.set_index(0, inplace=True)
     df.to_csv(save_path)
@@ -208,7 +207,7 @@ if __name__ == '__main__':
     start = time.time()
     # predict_pos_neg_with_tag('../data/tag_comment_pretreat.json', '../data/tag_comment_pos_neg.json')
     # predict = eval_one_sentence('这真是太好了', label=1)
-    # eval_file('../data/002_meidi_comment_comressed.txt')
+    eval_file('./data/test.tsv', save_path='../data/comment2.csv')
     # comment_split_pos_neg_file(filepath='../data/comment_0.960.csv', save_path='../data')
-    tag_comment_split_pos_neg(filepath='../data/tag_comment_pos_neg_0.96.json', save_path='../data')
+    # tag_comment_split_pos_neg(filepath='../data/tag_comment_pos_neg_0.96.json', save_path='../data')
     print(f'time is {time.time() - start}')
