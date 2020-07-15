@@ -30,50 +30,50 @@ def login(path):
 
 @st.cache
 def load_word_cloud(path):
-    image = Image.open('../data/word_cloud/'+path)
+    image = Image.open('data/word_cloud/'+path)
     return image
 
 
 @st.cache
 def load_word_net(path):
-    image = Image.open('../data/word_net/'+path)
+    image = Image.open('data/word_net/'+path)
     return image
 
 
 @st.cache
 def load_data_origin():
-    data_origin = pd.read_csv('../data/000_meidi_data_origin.txt', encoding='utf-8')
+    data_origin = pd.read_csv('data/000_meidi_data_origin.txt', encoding='utf-8')
     return data_origin
 
 
 @st.cache
 def load_data_deldup():
-    data_deldup = pd.read_csv('../data/001_meidi_data_deldup.txt', encoding='utf-8')
+    data_deldup = pd.read_csv('data/001_meidi_data_deldup.txt', encoding='utf-8')
     return data_deldup
 
 
 @st.cache
 def load_data_compress():
-    data_compress = pd.read_csv('../data/002_meidi_data_comressed.txt', encoding='utf-8')
+    data_compress = pd.read_csv('data/002_meidi_data_comressed.txt', encoding='utf-8')
     return data_compress
 
 
 @st.cache
 def load_tag_comments_origin():
-    with open('../data/003_meidi_tagComment.json', 'r', encoding='utf-8') as f:
+    with open('data/003_meidi_tagComment.json', 'r', encoding='utf-8') as f:
         tag_comments = json.load(f)
     return tag_comments
 
 
 @st.cache
 def load_comments_sentiment():
-    data_classify = pd.read_csv('../data/004_meidi_data_sentiment.txt', encoding='utf-8')
+    data_classify = pd.read_csv('data/004_meidi_data_sentiment.txt', encoding='utf-8')
     return data_classify
 
 
 @st.cache
 def load_neg_comment():
-    data = pd.read_csv('../data/005_neg_comment.csv', encoding='utf-8', header=None)
+    data = pd.read_csv('data/005_neg_comment.csv', encoding='utf-8', header=None)
     data = data.drop(index=[0])
     data = data.drop(columns=[0])
     return data
@@ -81,7 +81,7 @@ def load_neg_comment():
 
 @st.cache
 def load_pos_comment():
-    data = pd.read_csv('../data/005_pos_comment.csv', encoding='utf-8', header=None)
+    data = pd.read_csv('data/005_pos_comment.csv', encoding='utf-8', header=None)
     data = data.drop(index=[0])
     data = data.drop(columns=[0])
     return data
@@ -180,7 +180,7 @@ st.markdown('### 4.1 模型神经网络结构图网络')
 
 if st.button('显示结构图'):
     # 子进程显示tensorboard
-    p = subprocess.Popen('tensorboard --logdir ../SentimentClassification/RoBert-wwm-ext-Net')
+    p = subprocess.Popen('tensorboard --logdir SentimentClassification/RoBert-wwm-ext-Net')
     time.sleep(2)
     # 打开tensorboard的网址
     webbrowser.open('http://localhost:6006/')
@@ -192,7 +192,7 @@ if st.button('显示结构图'):
 st.markdown('### 4.2 模型训练Loss曲线')
 if st.button('显示Loss曲线'):
     # 子进程显示tensorboard
-    p = subprocess.Popen('tensorboard --logdir ../SentimentClassification/runs')
+    p = subprocess.Popen('tensorboard --logdir SentimentClassification/runs')
     time.sleep(2)
     # 打开tensorboard的网址
     webbrowser.open('http://localhost:6006/')
