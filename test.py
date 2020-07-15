@@ -5,6 +5,16 @@
 # @Software: PyCharm
 # @Project: Comment_Sentiment_Analysis
 # @Description:
+import webbrowser
+
+from selenium import webdriver
 import os
-os.system('tensorboard --logdir SentimentClassification/RoBert-wwm-ext-Net')
-print(d)
+webbrowser.open("www.baidu.com")
+
+def login():
+    webbrowser.open('file://' + os.getcwd() + "/data/LDA_Results/lda_其他特色_3_neg.html")
+
+
+login()
+
+

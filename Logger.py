@@ -4,7 +4,7 @@
 # @FileName: Logger.py
 # @Software: PyCharm
 # @Project: Comment_Sentiment_Analysis
-# @Description: 用于记录日志
+# @Description:
 
 import logging
 import logging.handlers
