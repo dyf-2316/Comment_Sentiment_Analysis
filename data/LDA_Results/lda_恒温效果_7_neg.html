@@ -1,0 +1,41 @@
+
+<link rel="stylesheet" type="text/css" href="https://cdn.rawgit.com/bmabey/pyLDAvis/files/ldavis.v1.0.0.css">
+
+
+<div id="ldavis_el3181950426023203701412129"></div>
+<script type="text/javascript">
+
+var ldavis_el3181950426023203701412129_data = {"mdsDat": {"x": [0.3104865960546452, -0.30395900360640266, -0.0054710358672171505, 0.0002818214020017876, -0.006909467779680856, 0.0018062752949098175, 0.003764814501743904], "y": [-0.0, -0.0, -0.0, -0.0, -0.0, -0.0, -0.0], "topics": [1, 2, 3, 4, 5, 6, 7], "cluster": [1, 1, 1, 1, 1, 1, 1], "Freq": [35.05982632177047, 34.21776542113011, 6.145166555387611, 6.14465954165423, 6.14462516225079, 6.14401546422009, 6.1439415335866965]}, "tinfo": {"Term": ["\u4f7f\u7528", "\u6ca1\u6709", "\u6ca1\u6709", "\u4f7f\u7528", "\u4f7f\u7528", "\u6ca1\u6709", "\u4f7f\u7528", "\u6ca1\u6709", "\u4f7f\u7528", "\u6ca1\u6709", "\u4f7f\u7528", "\u6ca1\u6709", "\u4f7f\u7528", "\u6ca1\u6709", "\u6ca1\u6709", "\u4f7f\u7528"], "Freq": [18.0, 19.0, 13.163313718416864, 0.1594202838559133, 12.760861865985202, 0.2418889940442377, 1.223939039399604, 1.111224251647688, 1.1817514361049501, 1.1532191897236572, 1.2343073203577237, 1.1006502412975765, 1.1704419674256978, 1.1642839089779364, 1.1786506121992377, 1.1560471705637068], "Total": [18.0, 19.0, 19.1132309163072, 18.886769083692798, 18.886769083692798, 19.1132309163072, 18.886769083692798, 19.1132309163072, 18.886769083692798, 19.1132309163072, 18.886769083692798, 19.1132309163072, 18.886769083692798, 19.1132309163072, 19.1132309163072, 18.886769083692798], "Category": ["Default", "Default", "Topic1", "Topic1", "Topic2", "Topic2", "Topic3", "Topic3", "Topic4", "Topic4", "Topic5", "Topic5", "Topic6", "Topic6", "Topic7", "Topic7"], "logprob": [2.0, 1.0, -0.012, -4.4257, -0.0188, -3.9844, -0.646, -0.7426, -0.681, -0.7054, -0.6375, -0.7521, -0.6905, -0.6958, -0.6835, -0.7029], "loglift": [2.0, 1.0, 0.6752, -3.7266, 0.6803, -3.2972, 0.0531, -0.0554, 0.0181, -0.0182, 0.0616, -0.0649, 0.0086, -0.0086, 0.0037, -0.0038]}, "token.table": {"Topic": [2, 3, 4, 5, 6, 7, 1, 3, 4, 5, 6, 7], "Freq": [0.6883125399793474, 0.052947118459949795, 0.052947118459949795, 0.052947118459949795, 0.052947118459949795, 0.052947118459949795, 0.6801571150855789, 0.05231977808350607, 0.05231977808350607, 0.05231977808350607, 0.05231977808350607, 0.05231977808350607], "Term": ["\u4f7f\u7528", "\u4f7f\u7528", "\u4f7f\u7528", "\u4f7f\u7528", "\u4f7f\u7528", "\u4f7f\u7528", "\u6ca1\u6709", "\u6ca1\u6709", "\u6ca1\u6709", "\u6ca1\u6709", "\u6ca1\u6709", "\u6ca1\u6709"]}, "R": 2, "lambda.step": 0.01, "plot.opts": {"xlab": "PC1", "ylab": "PC2"}, "topic.order": [7, 2, 1, 4, 6, 5, 3]};
+
+function LDAvis_load_lib(url, callback){
+  var s = document.createElement('script');
+  s.src = url;
+  s.async = true;
+  s.onreadystatechange = s.onload = callback;
+  s.onerror = function(){console.warn("failed to load library " + url);};
+  document.getElementsByTagName("head")[0].appendChild(s);
+}
+
+if(typeof(LDAvis) !== "undefined"){
+   // already loaded: just create the visualization
+   !function(LDAvis){
+       new LDAvis("#" + "ldavis_el3181950426023203701412129", ldavis_el3181950426023203701412129_data);
+   }(LDAvis);
+}else if(typeof define === "function" && define.amd){
+   // require.js is available: use it to load d3/LDAvis
+   require.config({paths: {d3: "https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min"}});
+   require(["d3"], function(d3){
+      window.d3 = d3;
+      LDAvis_load_lib("https://cdn.rawgit.com/bmabey/pyLDAvis/files/ldavis.v1.0.0.js", function(){
+        new LDAvis("#" + "ldavis_el3181950426023203701412129", ldavis_el3181950426023203701412129_data);
+      });
+    });
+}else{
+    // require.js not available: dynamically load d3 & LDAvis
+    LDAvis_load_lib("https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js", function(){
+         LDAvis_load_lib("https://cdn.rawgit.com/bmabey/pyLDAvis/files/ldavis.v1.0.0.js", function(){
+                 new LDAvis("#" + "ldavis_el3181950426023203701412129", ldavis_el3181950426023203701412129_data);
+            })
+         });
+}
+</script>
