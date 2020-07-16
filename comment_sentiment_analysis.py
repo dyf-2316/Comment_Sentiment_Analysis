@@ -494,6 +494,37 @@ if section == '6. LDA主题模型构建':
     if st.button('负面评论LDA结果展示'):
         login(u'lda_{}_{}_neg.html'.format(tag, topic_number))
 
+    code_LDA = '''
+    def LDA(data, components, htmlfile=None):
+    """
+    训练LDA模型，同时生成可视化文件
+    :param data: (list) 文档列表
+    :param components: (int) 指定主题数  
+    :param htmlfile: (str) 可视化文件存储路径
+    :return: None
+    """
+    # 关键词提取和向量转化
+    tf_vectorizer = CountVectorizer(max_features=1000,
+                                    max_df=0.5,
+                                    min_df=10,
+                                    encoding='utf-8'
+                                    )
+    tf = tf_vectorizer.fit_transform(data)
+    mylogger.debug('LDA模型训练开始')
+    lda = LatentDirichletAllocation(n_components=components,
+                                    max_iter=50,
+                                    learning_method='online',
+                                    learning_offset=50,
+                                    random_state=0,
+                                    )
+    lda.fit(tf)
+    mylogger.debug('LDA模型训练完成')
+    result = pyLDAvis.sklearn.prepare(lda, tf, tf_vectorizer)
+    pyLDAvis.save_html(result, '../data/LDA_Results/' + htmlfile)
+    mylogger.debug('LDA模型可视化文件已生成')
+    '''
+    st.code(code_LDA)
+
     st.markdown('### 6.2 LDA模型优化')
     st.markdown('用 cv coherence 来度量主题的连贯性，以此来选择出最优的 主题数 作为超参数')
 
@@ -508,6 +539,7 @@ if section == '6. LDA主题模型构建':
     data_cv_neg = data_cv_neg.T
     data_cv_neg = (data_cv_neg['cv'] - data_cv_neg['cv'].min()) / (data_cv_neg['cv'].max() - data_cv_neg['cv'].min())
     st.line_chart(data_cv_neg)
+
 
 if section == '7. 模型评估与优化':
     pass
