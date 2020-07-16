@@ -1,14 +1,10 @@
 import json
-import gensim
-from gensim import corpora
 from gensim.corpora import Dictionary
-from gensim.models import ldamodel
 from gensim.models import LdaModel
 from gensim.models import CoherenceModel
-from gensim import models
 import numpy as np
 import pandas as pd
-
+import re
 
 def loaddata_csv(filepath):
     data = pd.read_csv(filepath, encoding='utf-8', header=None)
@@ -24,6 +20,8 @@ def loaddata_csv(filepath):
 def cut_text(text):
     # 文本切为list
     text = text.replace(",", "").replace("'", "").replace("[", '').replace("]", '')
+    # 或者改为下面这个
+    # text = re.sub(r',|\'|\[|\]', '', text)
     textlist = text.split(u" ")
     return textlist
 
