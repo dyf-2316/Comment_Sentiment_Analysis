@@ -5,7 +5,7 @@
 # @Software: PyCharm
 # @Project: Comment_Sentiment_Analysis
 # @Description:
-# main.py
+
 
 from transformers import BertForSequenceClassification
 import torch
@@ -15,7 +15,7 @@ from SentimentClassification.makedataFile import data_loader
 from torch.utils.data import DataLoader
 # from tensorboardX import SummaryWriter
 
-# 之后需要加tensorboard
+# 使用tensorboard
 # writer = SummaryWriter(comment='train')
 # 使用gpu还是cpu
 # 检测当前环境设备
@@ -90,7 +90,11 @@ class model_train(object):
                 correct += predicted.data.eq(label.data).cpu().sum()
         print(f'test epoch{epoch} ' + "time:%.3f" % (time.time() - start_time))
         acc = (1.0 * correct.numpy()) / total
+
+        if acc > max(self.acc):
+            self.save_model('model')
         self.acc.append(acc)
+
         print("Acc:%.3f" % (acc))
         # writer.add_scalar(tag='acc', scalar_value=acc, global_step=epoch)
         pass
@@ -112,7 +116,12 @@ class model_train(object):
         :param model_path:
         :return:
         """
-        torch.save(self.model.state_dict(), model_path + f'/model_{max(self.acc)}_{time.time()}.pth')
+        # 保存最新的模型
+        model_file = model_path + f'/model_{self.acc[-1]}_{time.strftime("%Y%m%d-%X")}.pth'
+        print('-' * 100)
+        print(f'model save to {model_file}')
+        print('-' * 100)
+        torch.save(self.model.state_dict(), model_file)
 
 if __name__ == '__main__':
     train = model_train(epochs=1)
