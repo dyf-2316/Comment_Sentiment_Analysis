@@ -50,11 +50,18 @@ def eval_one_sentence(sentence, label, bert_model=model_config.BERT_MODEL):
 
 
 def str_cut(comment, stop_words):
-    seg_list_exact = psg.cut(comment)
+    """
+    切分字符串，并去除停用词，保留v, n, a, d, vd, an, ad，返回处理好的单词
+    :param comment: (str) 文本评论
+    :param stop_words: (list) 停用词
+    :return: object_list (list) 处理好的词
+    """
+    seg_list = psg.cut(comment)
     object_list = []
-    for word in seg_list_exact:  # 循环读取每个分词
-        # 获得需要的词性
-        if word.word not in stop_words and (word.flag in ['v', 'n', 'a', 'd', 'vd', 'an', 'ad']): object_list.append(word.word)  # 追加到列表
+    for word in seg_list:  # 循环读取每个分词
+        # 获得需要的词性，去除停用词
+        if word.word not in stop_words and (word.flag in ['v', 'n', 'a', 'd', 'vd', 'an', 'ad']):
+            object_list.append(word.word)
     return object_list
 
 

@@ -4,7 +4,7 @@
 # @FileName: SparkCloud.py
 # @Software: PyCharm
 # @Project: Comment_Sentiment_Analysis
-# @Description:
+# @Description: 生成Spark Clouds
 import pandas as pd
 import jieba.posseg as psg
 import matplotlib.pyplot as plt
@@ -117,9 +117,9 @@ def rescale(data_list, a, b):
     return [a+((b-a) * (data - min(data_list)))/(max(data_list) - min(data_list)) for data in data_list]
 
 
-def spark_cloud(spark_file, month_comments_num_file, top_words_file, save_fig_path, font_size=(10, 30), alpha=(0.5, 1), fit_power=7):
+def spark_clouds(spark_file, month_comments_num_file, top_words_file, save_fig_path, font_size=(10, 30), alpha=(0.5, 1), fit_power=7, subplot=(5,10)):
     """
-    绘制spark cloud图形
+    绘制spark clouds图形
     :param spark_file: （str） 每个top word 随时间的变化的文件的地址
     :param month_comments_num_file: （str） 每个月的包含的top words的词频统计文件地址
     :param top_words_file: （str） 所有评论中选取的top words的路径
@@ -127,6 +127,7 @@ def spark_cloud(spark_file, month_comments_num_file, top_words_file, save_fig_pa
     :param font_size: （tuple）eg：（10，20）标题大小的范围
     :param alpha: （tuple）eg：（0.5，1） 标题透明度的范围
     :param fit_power: int 多次函数拟合数据的次方
+    :param subplot:（tuple） eg: (5,10) 表示有50个子图，需要自己根据top words的数量进行调整
     :return:
     """
     with open(spark_file, 'r', encoding='utf-8') as f:
@@ -147,16 +148,19 @@ def spark_cloud(spark_file, month_comments_num_file, top_words_file, save_fig_pa
     # 使中文可以显示
     plt.rcParams['font.sans-serif'] = ['SimHei']
     for i, word in enumerate(top_words_spark_dict.keys()):
+        # 规范化
         count_list = []
         for id, value in enumerate(top_words_spark_dict[word]):
             count_list.append(value/comment_count_list[id])
+
         x = range(len(count_list))
         # coef 为系数，poly_fit 拟合函数
         coef1 = np.polyfit(x, count_list, fit_power)
         poly_fit1 = np.poly1d(coef1)
-        ax = plt.subplot(5, 10, i+1)
+        ax = plt.subplot(subplot[0], subplot[1], i+1)
         # 调整子图间距
         plt.subplots_adjust(wspace=1, hspace=1)
+
         plt.title(word, fontsize=font_size_list[i], color='blue', alpha=alpha_list[i])
         plt.plot(x, poly_fit1(x))
         # 只有下边框可视
@@ -164,7 +168,7 @@ def spark_cloud(spark_file, month_comments_num_file, top_words_file, save_fig_pa
         ax.spines['right'].set_visible(False)
         ax.spines['bottom'].set_visible(True)
         ax.spines['left'].set_visible(False)
-        plt.ylim(0)
+        # 去掉x y轴的标签和标度
         plt.yticks([])
         plt.xticks([])
         pass
@@ -195,4 +199,4 @@ if __name__ == '__main__':
     # get_month_word_count('../data/007_meidi_data_lowscore.txt', top_words_file='../data/low_score/low_score_top_words.json', save_file_path='../data/low_score/low_score_comments')
     # write_spark_json(comments_dir='../data/low_score/low_score_comments/', top_words_file='../data/low_score/low_score_top_words.json', save_file='../data/low_score/low_score_spark.json')
     # get_month_comments_num('../data/007_meidi_data_lowscore.txt', save_file='../data/low_score/low_score_month_comments_num.json')
-    spark_cloud('../data/low_score/low_score_spark.json', month_comments_num_file='../data/low_score/low_score_month_comments_num.json', top_words_file='../data/low_score/low_score_top_words.json', save_fig_path='../data/low_score/low_score.png')
+    spark_clouds('../data/low_score/low_score_spark.json', month_comments_num_file='../data/low_score/low_score_month_comments_num.json', top_words_file='../data/low_score/low_score_top_words.json', save_fig_path='../data/low_score/low_score.png')

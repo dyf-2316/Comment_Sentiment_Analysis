@@ -6,6 +6,11 @@ mylogger = Logger('decorator').logger
 
 
 def timer(func):
+    """
+    返回一个函数的执行时间的装饰器
+    :param func:
+    :return:
+    """
     def wrapper(*args, **kwargs):
         start = time()
         r = func(*args, **kwargs)
