@@ -74,4 +74,6 @@ def eval_file2(filepath, save_path, bert_model=model_config.BERT_MODEL):
     pass
 
 if __name__ == '__main__':
-    eval_file2(filepath='./data/test.tsv', save_path='./data/test_pred.csv')
+    # eval_file2(filepath='./data/test.tsv', save_path='./data/test_pred.csv')
+    word_count_dict = {}
+    print(word_count_dict.get('a', 0))

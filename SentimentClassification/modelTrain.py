@@ -5,7 +5,7 @@
 # @Software: PyCharm
 # @Project: Comment_Sentiment_Analysis
 # @Description:
-# main.py
+
 
 from transformers import BertForSequenceClassification
 import torch
