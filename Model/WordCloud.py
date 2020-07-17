@@ -64,6 +64,7 @@ def generate_word_cloud(filename, pic_name):
     plt.imshow(wc, interpolation='bilinear')
     plt.axis("off")
     plt.show()
+    pass
 
 
 if __name__ == "__main__":
