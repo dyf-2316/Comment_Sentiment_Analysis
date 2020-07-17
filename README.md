@@ -1,31 +1,14 @@
 # Comment_Sentiment_Analysis
-## 项目安排及分工
-1. 数据采集
-	- python数据爬虫
-	* 简单的数据分析
-		- 好评坏评比例
-		- 时间序列上评价的走势
-		- 尽量可视化
-		P.s. 这里是一个反馈的过程，我们尽可能找一些差评比例高一些，有研究价值且数据量充足的商品。
-	- 抽取评论数据
-2. 数据预处理
-	- 去重
-	- 机械压缩
-	- 短句删除
-	- jieba分词
-	- 去除停用词
-3. 数据建模
-	- 情感分析
-		- 区分正面情感和负面情感
-		* 为了能更好区分产品的优劣势，选择评分高的正面数据1、评分低的负面数据2
-	- 将数据1和2进行可视化
-		- 语义网络 
-		* 词云
-	- 关键词的提取
-  - LDA主题模型构建
-		* 用LDAViz进行可视化的现实模型
-4. 模型评估与优化
-	- U-mass，coherence参数大小来评估
-	-  调参
-		- 话题数
-		- etc.
+
+## heroku branch
+
+This branch is used to deploy Heroku 
+
+all the streamlit designing code is in comment_sentiment_analysis.py
+
+the Procfile, requirements.txt, and setup.sh are needed to deploy the app on the Heroku
+
+## How to deploy app on the Heroku?
+
+
+see Joshua_yi's blog [https://blog.csdn.net/weixin_44984664/article/details/105776080](https://blog.csdn.net/weixin_44984664/article/details/105776080)
