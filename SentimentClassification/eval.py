@@ -24,7 +24,7 @@ def eval_one_sentence(sentence, label, bert_model=model_config.BERT_MODEL):
     """
     对一个字符串的情感做出判断，二分类
     :param bert_model: 选择使用的模型
-    :param sentence: (str):训练是用的len 100 ，长的会截断，短的会padding为0
+    :param sentence: (str):训练是用的len 512 ，长的会截断，短的会padding为0
     :param label: (int) 1 or 0
     :return:
     """
@@ -34,7 +34,7 @@ def eval_one_sentence(sentence, label, bert_model=model_config.BERT_MODEL):
     model = BertForSequenceClassification.from_pretrained(bert_model)
     # 加载训练好的模型
     model.load_state_dict(torch.load(model_config.TRAINED_MODEL, map_location=torch.device(device)))
-    input_ids = torch.tensor(tokenizer.encode(sentence, add_special_tokens=True)).unsqueeze(0)  # Batch size 1
+    input_ids = torch.tensor(tokenizer.encode(sentence[:512], add_special_tokens=True)).unsqueeze(0)  # Batch size 1
     labels = torch.tensor(int(label)).unsqueeze(0)  # Batch size 1
     # 如果使用gpu 转到cuda上运行
     if use_gpu:
@@ -74,7 +74,7 @@ def eval_one(sentence, tokenizer, model):
     :return: predicted.indices.data.cpu().numpy()[0] (int) 预测之后的数据
     """
     # tokenizer
-    input_ids = torch.tensor(tokenizer.encode(sentence, add_special_tokens=True)).unsqueeze(0)  # Batch size 1
+    input_ids = torch.tensor(tokenizer.encode(sentence[:512], add_special_tokens=True)).unsqueeze(0)  # Batch size 1
     labels = torch.tensor([1]).unsqueeze(0)  # Batch size 1
     # 如果使用gpu 转到cuda上运行
     if use_gpu:
@@ -107,7 +107,7 @@ def eval_file(filepath, save_path, bert_model=model_config.BERT_MODEL):
     print(f'读取文件 {filepath} ……')
     df = pd.read_csv(filepath, header=None)
     print('开始情感预测 ……')
-    df['sentiment'] = df[1].apply(lambda x: eval_one(x[:100], tokenizer, model))
+    df['sentiment'] = df[1].apply(lambda x: eval_one(x, tokenizer, model))
     print(f'开始保存情感预测后的数据 {save_path} ……')
     df.set_index(0, inplace=True)
     df.to_csv(save_path)
@@ -213,8 +213,8 @@ def tag_comment_split_pos_neg(filepath, save_path):
 if __name__ == '__main__':
     start = time.time()
     # predict_pos_neg_with_tag('../data/tag_comment_pretreat.json', '../data/tag_comment_pos_neg.json')
-    # predict = eval_one_sentence('这真是太好了', label=1)
-    eval_file('./data/test.tsv', save_path='../data/comment2.csv')
+    predict = eval_one_sentence('这真是太好了', label=1)
+    # eval_file('./data/test.tsv', save_path='../data/comment2.csv')
     # comment_split_pos_neg_file(filepath='../data/comment_0.960.csv', save_path='../data')
     # tag_comment_split_pos_neg(filepath='../data/tag_comment_pos_neg_0.96.json', save_path='../data')
     print(f'time is {time.time() - start}')

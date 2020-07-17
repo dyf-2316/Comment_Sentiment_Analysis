@@ -1,23 +1,20 @@
 # -*- coding:utf-8 -*-
 # @Time： 2020-07-12 15:47
 # @Author: Joshua_yi
-# @FileName: modelTrain.py
+# @FileName: model_train.py
 # @Software: PyCharm
 # @Project: Comment_Sentiment_Analysis
 # @Description:
-
-
 from transformers import BertForSequenceClassification
 import torch
 import time
 from SentimentClassification import model_config
-from SentimentClassification.makedataFile import data_loader
+from SentimentClassification.makedata import data_loader
 from torch.utils.data import DataLoader
-# from tensorboardX import SummaryWriter
+from tensorboardX import SummaryWriter
 
 # 使用tensorboard
-# writer = SummaryWriter(comment='train')
-# 使用gpu还是cpu
+writer = SummaryWriter(comment='train')
 # 检测当前环境设备
 device = ['cpu', 'gpu'][torch.cuda.is_available()]
 # 选择是否使用gpu
@@ -25,9 +22,10 @@ use_gpu = (device == 'gpu') and model_config.USE_GPU
 
 
 class model_train(object):
-    def __init__(self, epochs=model_config.EPOCH, bert_model_path=model_config.BERT_MODEL):
+    def __init__(self, epochs=model_config.EPOCH, bert_model_path=model_config.BERT_MODEL, save_acc_threshold=0.95):
         print('start train ... ')
         self.epochs = epochs
+        self.save_acc_threshold = save_acc_threshold
         print('load pretrained model ...')
         self.model = BertForSequenceClassification.from_pretrained(bert_model_path, num_labels=model_config.NUM_LABEL)
         if use_gpu: self.model.cuda()
@@ -39,16 +37,20 @@ class model_train(object):
         testset = data_loader(model_config.DATA_PATH, data_type='test')
         self.testloader = DataLoader(testset, batch_size=model_config.BATCH_SIZE, shuffle=False,
                                 num_workers=model_config.NUM_WORKERS)
-        self.acc = []
+        self.acc = [0]
+        self.iter = 0
         pass
 
     def train_one_epoch(self, epoch):
         print(f'train--Epoch: {epoch + 1}')
-        optimizer = torch.optim.Adam(self.model.parameters(), lr=model_config.LR)
+        optimizer = torch.optim.SGD(self.model.parameters(), lr=model_config.LR)
         self.model.train()
         start_time = time.time()
-        print_step = 10
+        print_step = 1
+
+        witer_step = 30 * 20
         for batch_idx, (sue, label, posi) in enumerate(self.trainloader):
+            self.iter += model_config.BATCH_SIZE
             if use_gpu:
                 sue = sue.cuda()
                 posi = posi.cuda()
@@ -57,12 +59,17 @@ class model_train(object):
             optimizer.zero_grad()
             # 输入参数为词列表、位置列表、标签
             outputs = self.model(sue, position_ids=posi, labels=label)
+
             loss, logits = outputs[0], outputs[1]
             loss.backward()
             optimizer.step()
+            if self.iter % witer_step == 0:
+                writer.add_scalar(tag='loss', scalar_value=loss.mean(), global_step=self.iter)
+
             if batch_idx % print_step == 0:
-                print("epoch:[%d|%d] [%d|%d] loss:%f" % (epoch + 1, self.epochs, batch_idx, len(self.trainloader), loss.mean()))
-                # writer.add_scalar(tag='loss', scalar_value=loss.mean(), global_step=(epoch * len(self.trainloader)//print_step) + batch_idx)
+                print("epoch:[%d|%d] [%d|%d] loss:%f" % (
+                epoch + 1, self.epochs, batch_idx, len(self.trainloader), loss.mean()))
+
         print(f'train epoch{epoch} ' + "time:%.3f" % (time.time() - start_time))
         pass
 
@@ -91,12 +98,13 @@ class model_train(object):
         print(f'test epoch{epoch} ' + "time:%.3f" % (time.time() - start_time))
         acc = (1.0 * correct.numpy()) / total
 
-        if acc > max(self.acc):
+        if acc > max(self.acc) and acc > self.save_acc_threshold:
             self.save_model('model')
+
         self.acc.append(acc)
 
         print("Acc:%.3f" % (acc))
-        # writer.add_scalar(tag='acc', scalar_value=acc, global_step=epoch)
+        writer.add_scalar(tag='acc', scalar_value=acc, global_step=epoch)
         pass
 
     def train_epochs(self):
@@ -122,8 +130,3 @@ class model_train(object):
         print(f'model save to {model_file}')
         print('-' * 100)
         torch.save(self.model.state_dict(), model_file)
-
-if __name__ == '__main__':
-    train = model_train(epochs=1)
-    train.train_epochs()
-    train.save_model('./bert/model')

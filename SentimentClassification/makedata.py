@@ -1,7 +1,7 @@
 # -*- coding:utf-8 -*-
 # @Time： 2020-07-12 15:50
 # @Author: Joshua_yi
-# @FileName: makedataFile.py
+# @FileName: makedata.py
 # @Software: PyCharm
 # @Project: Comment_Sentiment_Analysis
 # @Description: 产生模型训练所需的data
@@ -31,7 +31,6 @@ class data_loader(Dataset):
                 while (len(word_l) != max_length):
                     word_l.append(0)
             # 添加开始和结束token
-            # TODO : 查明代表的内容
             word_l.append(102)
             l = word_l
             word_l = [101]
