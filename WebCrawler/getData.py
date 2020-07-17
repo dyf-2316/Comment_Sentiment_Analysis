@@ -112,15 +112,6 @@ def get_comment_data(product_id, score, page, product):
     data = json_data['comments']
     comment_data = []
     for i in range(len(data)):
-        # yield {
-        #     "good_id": product['good_id'],
-        #     "brand": product['brand'],
-        #     "price": product['price'],
-        #     "creationTime": data[i]['creationTime'],
-        #     "score": data[i]['score'],
-        #     "comment": data[i]['content']
-        # }
-        # 也可以采用生成器的形式来保存数据字典
         comment = {
             "good_id": product['good_id'],
             "brand": product['brand'],
