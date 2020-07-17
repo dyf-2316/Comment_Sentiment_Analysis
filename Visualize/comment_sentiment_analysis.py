@@ -8,7 +8,6 @@
 import base64
 import json
 import webbrowser
-
 import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -540,8 +539,6 @@ if section == '③ 自训练情感分析模型':
     score[4] = score[4] / (score.iloc[0, 3] + score.iloc[1, 3])
     score[5] = score[5] / (score.iloc[0, 4] + score.iloc[1, 4])
     score = score.T
-    # score.plot.bar(stacked=True, color=['purple', 'skyblue'], alpha=0.5)
-    # st.pyplot()
     score[0] = score[0] * -1
     st.bar_chart(score, width=100, use_container_width=True)
 
