@@ -194,9 +194,10 @@ if section == '☆ 项目介绍与规划':
     st.markdown("""- 丁一凡：
     1. 数据爬取与数据抽取
     2. 数据预处理以及标签评论的处理
-    3. 撰写会议记录
-    4. Streamlit可视化呈现最终结果
-    5. 将项目搭建在Heroku云服务器上
+    3. Streamlit可视化和交互式呈现最终结果
+    4. 将项目搭建在Heroku云服务器上
+    5. 撰写会议记录
+    6. 部署协调全组的工作
 - 鲁含章：
     1. 对整体评论数据与分标签评论数据进行LDA主题分析模型建模及可视化
     2. 使用ROST对分标签评论数据进行语义网络分析
@@ -331,17 +332,17 @@ if section == '① 数据采集与抽取':
     st.markdown('### 1.2 数据存储（MongoDB）')
     code_save_mongo = '''
     def save_to_mongo(data):
-    """
-    将数据存入mongoDB
-    :param data: (dict) 需要存入数据库的数据字典
-    :return:
-    """
-    client = MongoClient(**DATABASE_MONGO)
-    mongo_db = client['WebCrawler']
-    mongo_table = mongo_db['comment']
-    for item in data:
-        mongo_table.collection.insert_one(item)
-        mylogger.debug("存入数据 -- {}".format(item))
+        """
+        将数据存入mongoDB
+        :param data: (dict) 需要存入数据库的数据字典
+        :return:
+        """
+        client = MongoClient(**DATABASE_MONGO)
+        mongo_db = client['WebCrawler']
+        mongo_table = mongo_db['comment']
+        for item in data:
+            mongo_table.collection.insert_one(item)
+            mylogger.debug("存入数据 -- {}".format(item))
     '''
     st.code(code_save_mongo)
 
@@ -372,13 +373,13 @@ if section == '② 数据预处理与探索':
 
     code_deldup = '''
     def del_duplicate(data):
-    """
-    对数据框评论栏去重
-    :param data: (DataFrame)
-    :return: (DataFrame)
-    """
-    result = data.drop_duplicates(['comment'], ignore_index=True)
-    return result
+        """
+        对数据框评论栏去重
+        :param data: (DataFrame)
+        :return: (DataFrame)
+        """
+        result = data.drop_duplicates(['comment'], ignore_index=True)
+        return result
     '''
     st.code(code_deldup)
 
@@ -391,28 +392,28 @@ if section == '② 数据预处理与探索':
         st.dataframe(comments_compress, 500, 400)
     code_compress = '''
     def compress(comment, n=4):
-    """
-    对文本进行正序、逆序机械压缩，短句删除的处理
-    :param n: 所需删除短句的长度
-    :param comment: (str)
-    :return: (str)
-    """
-    comp_comm = []
-    comment = str(comment)
-    if len(comment) <= n:
-        pass
-    else:
-        comment = re.sub("[\s,./?'\"|\]\[{}+_)(*&^%$#@!~`=\-]+|[+\-，。/！？、～@#¥%…&*（）—；：‘’“”]+", " ", comment)
-        comp_list = list(comment)
-        comp_list = compressed_text(comp_list)
-        comp_list = compressed_text(comp_list[::-1])
-        comp_list = comp_list[::-1]
-        if len(comp_list) <= n:
+        """
+        对文本进行正序、逆序机械压缩，短句删除的处理
+        :param n: 所需删除短句的长度
+        :param comment: (str)
+        :return: (str)
+        """
+        comp_comm = []
+        comment = str(comment)
+        if len(comment) <= n:
             pass
         else:
-            comp_comm = []
-            comp_comm = (''.join(comp_list)).replace("\\n", "")
-    return comp_comm
+            comment = re.sub("[\s,./?'\"|\]\[{}+_)(*&^%$#@!~`=\-]+|[+\-，。/！？、～@#¥%…&*（）—；：‘’“”]+", " ", comment)
+            comp_list = list(comment)
+            comp_list = compressed_text(comp_list)
+            comp_list = compressed_text(comp_list[::-1])
+            comp_list = comp_list[::-1]
+            if len(comp_list) <= n:
+                pass
+            else:
+                comp_comm = []
+                comp_comm = (''.join(comp_list)).replace("\\n", "")
+        return comp_comm
     '''
     st.code(code_compress)
 
@@ -424,27 +425,27 @@ if section == '② 数据预处理与探索':
         st.json(tag_comment_origin)
     code_extract_tag = '''
     def extract_tag_comment(comment):
-    """
-    对评论数据进行标签评论抽取，若符合标签评论规范则返回标签评论字典，若不符合则返回None
-    :param comment: (str)
-    :return: (dict/None)
-    """
-    comment_lines = comment.split("\\n")
-    tag_comment_dict = {}
-    if len(comment) < 2:
-        return None
-    else:
-        for lines in comment_lines:
-            tag_comment = lines.split('：')
-            if len(tag_comment) == 2:
-                if len(tag_comment[0]) < 6:
-                    tag_comment_dict[tag_comment[0]] = tag_comment[1]
-            else:
-                continue
-    if tag_comment_dict:
-        return tag_comment_dict
-    else:
-        return None
+        """
+        对评论数据进行标签评论抽取，若符合标签评论规范则返回标签评论字典，若不符合则返回None
+        :param comment: (str)
+        :return: (dict/None)
+        """
+        comment_lines = comment.split("\\n")
+        tag_comment_dict = {}
+        if len(comment) < 2:
+            return None
+        else:
+            for lines in comment_lines:
+                tag_comment = lines.split('：')
+                if len(tag_comment) == 2:
+                    if len(tag_comment[0]) < 6:
+                        tag_comment_dict[tag_comment[0]] = tag_comment[1]
+                else:
+                    continue
+        if tag_comment_dict:
+            return tag_comment_dict
+        else:
+            return None
     '''
     st.code(code_extract_tag)
 
@@ -517,6 +518,7 @@ if section == '③ 自训练情感分析模型':
 
     st.markdown('### 3.3模型效果对比')
     df = pd.DataFrame({'Roberta-wwm-ext': [0.9282735613010842, 0.9089481946624803, 0.9538714991762768],
+                       'Bert-base-chinese': [0.87, 0.8284883720930233, 0.9375],
                        'snowNLP': [0.87, 0.8680781758957655, 0.8766447368421053],
                        'ROSTCM6': [0.675, 0.6319612590799032, 0.8585526315789473]},
                       index=['Accuracy', 'Precision', 'Recall']
@@ -573,19 +575,19 @@ if section == '④ 评论分词与改进':
     st.markdown('### 4.3 评论分词改进')
     code_cut_word = '''
     def str_cut(comment, stop_words):
-    """
-    切分字符串，并去除停用词，保留v, n, a, d, vd, an, ad，返回处理好的单词
-    :param comment: (str) 文本评论
-    :param stop_words: (list) 停用词
-    :return: object_list (list) 处理好的词
-    """
-    seg_list = psg.cut(comment)
-    object_list = []
-    for word in seg_list:  # 循环读取每个分词
-        # 获得需要的词性，去除停用词
-        if word.word not in stop_words and (word.flag in ['v', 'n', 'a', 'd', 'vd', 'an', 'ad']): 
-            object_list.append(word.word)  
-    return object_list
+        """
+        切分字符串，并去除停用词，保留v, n, a, d, vd, an, ad，返回处理好的单词
+        :param comment: (str) 文本评论
+        :param stop_words: (list) 停用词
+        :return: object_list (list) 处理好的词
+        """
+        seg_list = psg.cut(comment)
+        object_list = []
+        for word in seg_list:  # 循环读取每个分词
+            # 获得需要的词性，去除停用词
+            if word.word not in stop_words and (word.flag in ['v', 'n', 'a', 'd', 'vd', 'an', 'ad']): 
+                object_list.append(word.word)  
+        return object_list
     '''
     st.code(code_cut_word)
 
@@ -642,32 +644,32 @@ if section == '⑥ LDA主题模型构建':
 
     code_LDA = '''
     def LDA(data, components, htmlfile=None):
-    """
-    训练LDA模型，同时生成可视化文件
-    :param data: (list) 文档列表
-    :param components: (int) 指定主题数  
-    :param htmlfile: (str) 可视化文件存储路径
-    :return: None
-    """
-    # 关键词提取和向量转化
-    tf_vectorizer = CountVectorizer(max_features=1000,
-                                    max_df=0.5,
-                                    min_df=10,
-                                    encoding='utf-8'
-                                    )
-    tf = tf_vectorizer.fit_transform(data)
-    mylogger.debug('LDA模型训练开始')
-    lda = LatentDirichletAllocation(n_components=components,
-                                    max_iter=50,
-                                    learning_method='online',
-                                    learning_offset=50,
-                                    random_state=0,
-                                    )
-    lda.fit(tf)
-    mylogger.debug('LDA模型训练完成')
-    result = pyLDAvis.sklearn.prepare(lda, tf, tf_vectorizer)
-    pyLDAvis.save_html(result, 'data/LDA_Results/' + htmlfile)
-    mylogger.debug('LDA模型可视化文件已生成')
+        """
+        训练LDA模型，同时生成可视化文件
+        :param data: (list) 文档列表
+        :param components: (int) 指定主题数  
+        :param htmlfile: (str) 可视化文件存储路径
+        :return: None
+        """
+        # 关键词提取和向量转化
+        tf_vectorizer = CountVectorizer(max_features=1000,
+                                        max_df=0.5,
+                                        min_df=10,
+                                        encoding='utf-8'
+                                        )
+        tf = tf_vectorizer.fit_transform(data)
+        mylogger.debug('LDA模型训练开始')
+        lda = LatentDirichletAllocation(n_components=components,
+                                        max_iter=50,
+                                        learning_method='online',
+                                        learning_offset=50,
+                                        random_state=0,
+                                        )
+        lda.fit(tf)
+        mylogger.debug('LDA模型训练完成')
+        result = pyLDAvis.sklearn.prepare(lda, tf, tf_vectorizer)
+        pyLDAvis.save_html(result, 'data/LDA_Results/' + htmlfile)
+        mylogger.debug('LDA模型可视化文件已生成')
     '''
     st.code(code_LDA)
 
