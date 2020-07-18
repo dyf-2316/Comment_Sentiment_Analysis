@@ -516,7 +516,10 @@ if section == '③ 自训练情感分析模型':
             unsafe_allow_html=True,
         )
 
-    st.markdown('### 3.3模型效果对比')
+    st.markdown('***')
+
+    st.markdown('### 3.3模型效果')
+    st.markdown('#### 3.3.1 分类指标的对比')
     df = pd.DataFrame({'Roberta-wwm-ext': [0.9282735613010842, 0.9089481946624803, 0.9538714991762768],
                        'Bert-base-chinese': [0.87, 0.8284883720930233, 0.9375],
                        'snowNLP': [0.87, 0.8680781758957655, 0.8766447368421053],
@@ -524,6 +527,10 @@ if section == '③ 自训练情感分析模型':
                       index=['Accuracy', 'Precision', 'Recall']
                       )
     st.table(df)
+
+    st.markdown('#### 3.3.2 Roc曲线图')
+    image = load_image('data/source/Roc_graph.png')
+    st.image(image, width=600)
 
     st.markdown('***')
 
