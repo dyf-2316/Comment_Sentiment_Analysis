@@ -11,8 +11,12 @@ from transformers import BertTokenizer, BertForSequenceClassification
 import time
 from SentimentClassification import model_config
 import pandas as pd
+import numpy as np
 import ujson
 import jieba.posseg as psg
+import matplotlib.pyplot as plt
+from sklearn.metrics import roc_curve, auc
+
 # 使用gpu还是cpu
 # 检测当前环境设备
 device = ['cpu', 'gpu'][torch.cuda.is_available()]
@@ -225,6 +229,34 @@ def calculate_score(data):
     print(f"precision: {precision}")
     recall = (data[data.label == data.test].label == 1).value_counts()[1]/(data.label == 1).value_counts()[1]
     print(f"recall: {recall}")
+    pass
+
+
+def auc_curve(y, prob):
+    """
+    绘制ROC，AUC曲线图
+    :param y: （list）真实值
+    :param prob: （pred） 预测值
+    :return:
+    """
+    # y真实prob预测
+    fpr, tpr, threshold = roc_curve(y, prob)  # 计算真阳性率和假阳性率
+    roc_auc = auc(fpr, tpr)  # 计算auc的值
+
+    plt.figure()
+    lw = 2
+    plt.figure(figsize=(10, 10))
+    plt.plot(fpr, tpr, color='darkorange',
+             lw=lw, label='ROC curve (area = %0.3f)' % roc_auc)  # 假正率为横坐标，真正率为纵坐标做曲线
+    plt.plot([0, 1], [0, 1], color='navy', lw=lw, linestyle='--')
+    plt.xlim([0.0, 1.0])
+    plt.ylim([0.0, 1.05])
+    plt.xlabel('False Positive Rate')
+    plt.ylabel('True Positive Rate')
+    plt.title('ROC')
+    plt.legend(loc="lower right")
+
+    plt.show()
     pass
 
 
