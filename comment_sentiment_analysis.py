@@ -17,7 +17,7 @@ from PIL import Image
 plt.rcParams['font.sans-serif'] = ['SimHei']
 
 st.title('基于python的电商产品评论数据情感分析')
-st.markdown('🌈 组6  丁一凡 :dog: 李毅 :see_no_evil: 鲁含章 ☠️ 马生鸿 :feet: &ensp; :star2: [GitHub]('
+st.markdown('🌈 组6  dyf-2316 :dog: Joshua_yi :see_no_evil: hzkzTech ☠️ msh :feet: &ensp; :star2: [GitHub]('
             'https://github.com/dyf-2316/Comment_Sentiment_Analysis) :star2:')
 
 
@@ -191,24 +191,24 @@ if section == '☆ 项目介绍与规划':
     st.markdown('***')
 
     st.markdown('### 0.1 开发人员清单与分工')
-    st.markdown("""- 丁一凡：
+    st.markdown("""- dyf-2316：
     1. 数据爬取与数据抽取
     2. 数据预处理以及标签评论的处理
     3. Streamlit可视化和交互式呈现最终结果
     4. 将项目搭建在Heroku云服务器上
     5. 撰写会议记录
     6. 部署协调全组的工作
-- 鲁含章：
+- hzkzTech：
     1. 对整体评论数据与分标签评论数据进行LDA主题分析模型建模及可视化
     2. 使用ROST对分标签评论数据进行语义网络分析
     3. 需求文档撰写及更新等
     4. 对主题分析模型调参优化
-- 马生鸿：
+- msh：
     1. 对整体评论数据和分标签评论数据进行词云的绘制
     2. 完成交互诊断与反馈
     3. networkx绘制语义网络
     4. 撰写相关文档
-- 李毅: 
+- Joshua_yi: 
     1. 使用RoBERTa - wwm - ext预训练网络实现文本情感预测，对比ROST预测正确率提升25 %，并对不同的标签的评论进行情感分析
     2. 完成模型部分可视化
     3. 完成文本分词与改进
