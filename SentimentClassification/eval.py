@@ -105,11 +105,13 @@ def eval_file(filepath, save_path, bert_model=model_config.BERT_MODEL):
     model.load_state_dict(torch.load(model_config.TRAINED_MODEL, map_location=torch.device(device)))
     if use_gpu: model.cuda()
     print(f'读取文件 {filepath} ……')
-    df = pd.read_csv(filepath, header=None)
+    # df = pd.read_csv(filepath, header=None)
+    df = pd.read_csv(filepath, delimiter='\t')
     print('开始情感预测 ……')
-    df['sentiment'] = df[1].apply(lambda x: eval_one(x, tokenizer, model))
+    df['test'] = df['text_a'].apply(lambda x: eval_one(x, tokenizer, model))
+    # df['sentiment'] = df[1].apply(lambda x: eval_one(x, tokenizer, model))
     print(f'开始保存情感预测后的数据 {save_path} ……')
-    df.set_index(0, inplace=True)
+    df.set_index('label', inplace=True)
     df.to_csv(save_path)
     pass
 
@@ -210,11 +212,27 @@ def tag_comment_split_pos_neg(filepath, save_path):
     pass
 
 
+def calculate_score(data):
+    """
+    计算预测之后的accuracy， precision， recall
+    df, label is the true sentiments and the test is the predicted sentiments
+    :param data:（df）
+    :return:
+    """
+    accuracy = len(data[data.label == data.test])/len(data)
+    print(f"accuracy: {accuracy}")
+    precision = (data[data.label == data.test].label == 1).value_counts()[1]/(data.test == 1).value_counts()[1]
+    print(f"precision: {precision}")
+    recall = (data[data.label == data.test].label == 1).value_counts()[1]/(data.label == 1).value_counts()[1]
+    print(f"recall: {recall}")
+    pass
+
+
 if __name__ == '__main__':
     start = time.time()
     # predict_pos_neg_with_tag('../data/tag_comment_pretreat.json', '../data/tag_comment_pos_neg.json')
-    predict = eval_one_sentence('这真是太好了', label=1)
-    # eval_file('./data/test.tsv', save_path='../data/comment2.csv')
+    # predict = eval_one_sentence('这真是太好了', label=1)
+    eval_file('./data/test.tsv', save_path='../data/comment.csv', )
     # comment_split_pos_neg_file(filepath='../data/comment_0.960.csv', save_path='../data')
     # tag_comment_split_pos_neg(filepath='../data/tag_comment_pos_neg_0.96.json', save_path='../data')
     print(f'time is {time.time() - start}')

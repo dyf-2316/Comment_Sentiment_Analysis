@@ -195,8 +195,31 @@ def get_month_comments_num(data_file, save_file):
 
 
 if __name__ == '__main__':
-    # get_top_word_file('../data/007_meidi_data_lowscore.txt', save_file='../data/low_score/low_score_top_words.json')
-    # get_month_word_count('../data/007_meidi_data_lowscore.txt', top_words_file='../data/low_score/low_score_top_words.json', save_file_path='../data/low_score/low_score_comments')
-    # write_spark_json(comments_dir='../data/low_score/low_score_comments/', top_words_file='../data/low_score/low_score_top_words.json', save_file='../data/low_score/low_score_spark.json')
-    # get_month_comments_num('../data/007_meidi_data_lowscore.txt', save_file='../data/low_score/low_score_month_comments_num.json')
-    spark_clouds('../data/low_score/low_score_spark.json', month_comments_num_file='../data/low_score/low_score_month_comments_num.json', top_words_file='../data/low_score/low_score_top_words.json', save_fig_path='../data/low_score/low_score.png')
+    get_top_word_file('../data/007_meidi_data_lowscore.txt', save_file='../data/low_score/low_score_top_words.json')
+    get_month_word_count('../data/007_meidi_data_lowscore.txt',
+                         top_words_file='../data/low_score/low_score_top_words.json',
+                         save_file_path='../data/low_score/low_score_comments')
+    write_spark_json(comments_dir='../data/low_score/low_score_comments/',
+                     top_words_file='../data/low_score/low_score_top_words.json',
+                     save_file='../data/low_score/low_score_spark.json')
+    get_month_comments_num('../data/007_meidi_data_lowscore.txt',
+                           save_file='../data/low_score/low_score_month_comments_num.json')
+    spark_clouds('../data/low_score/low_score_spark.json',
+                 month_comments_num_file='../data/low_score/low_score_month_comments_num.json',
+                 top_words_file='../data/low_score/low_score_top_words.json',
+                 save_fig_path='../data/low_score/low_score.png')
+
+
+    # get_top_word_file('../data/007_meidi_data_highscore.txt', save_file='../data/high_score/high_score_top_words.json')
+    # get_month_word_count('../data/007_meidi_data_highscore.txt',
+    #                      top_words_file='../data/high_score/high_score_top_words.json',
+    #                      save_file_path='../data/high_score/high_score_comments')
+    # write_spark_json(comments_dir='../data/high_score/high_score_comments/',
+    #                  top_words_file='../data/high_score/high_score_top_words.json',
+    #                  save_file='../data/high_score/high_score_spark.json')
+    # get_month_comments_num('../data/007_meidi_data_highscore.txt',
+    #                        save_file='../data/high_score/high_score_month_comments_num.json')
+    # spark_clouds('../data/high_score/high_score_spark.json',
+    #              month_comments_num_file='../data/high_score/high_score_month_comments_num.json',
+    #              top_words_file='../data/high_score/high_score_top_words.json',
+    #              save_fig_path='../data/high_score/high_score.png')
