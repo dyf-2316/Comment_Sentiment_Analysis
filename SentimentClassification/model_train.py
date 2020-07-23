@@ -125,7 +125,7 @@ class model_train(object):
         :return:
         """
         # 保存最新的模型
-        model_file = model_path + f'/model_{self.acc[-1]}_{time.strftime("%Y%m%d-%X")}.pth'
+        model_file = model_path + f'/model_{self.acc[-1]}_{time.strftime("%Y%m%d-%H%M%S")}.pth'
         print('-' * 100)
         print(f'model save to {model_file}')
         print('-' * 100)
